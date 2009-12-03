@@ -250,6 +250,8 @@ init()
 {
 	cpInitChipmunk();
 
+	srand(time(NULL));
+
 	space = cpSpaceNew();
 	space->elasticIterations = 10;
 	space->gravity = cpvzero;
