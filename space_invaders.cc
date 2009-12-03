@@ -27,8 +27,8 @@ extern "C" {
 #define CONFIG_CAPTURE_FRAMES 0
 
 /* Size of the window */
-#define CONFIG_WINDOW_WIDTH 640
-#define CONFIG_WINDOW_HEIGHT 480
+#define CONFIG_WINDOW_WIDTH 1280
+#define CONFIG_WINDOW_HEIGHT 768
 
 /* Size of the game screen */
 #define CONFIG_SCREEN_WIDTH 128
@@ -335,7 +335,8 @@ resize(int width, int height)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	gluOrtho2D(-64, 64, 64 * aspect, -64 * aspect);
+	gluOrtho2D(-CONFIG_SCREEN_WIDTH, CONFIG_SCREEN_WIDTH,
+		CONFIG_SCREEN_HEIGHT * aspect, -CONFIG_SCREEN_HEIGHT * aspect);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -343,17 +344,18 @@ resize(int width, int height)
 
 static void draw_starfield(texture *tex, double scale)
 {
+	/* XXX: Calculate starfield based on screen and texture size. */
 	double o_x = camera_p.x / scale;
 	double o_y = camera_p.y / scale;
 
-	int d_x = (int) o_x / 64 - 1;
-	int d_y = (int) o_y / 64 - 1;
+	int d_x = (int) trunc(o_x / 64.) - 1;
+	int d_y = (int) trunc(o_y / 64.) - 1;
 
-	for (int y = 0; y < 4; ++y) {
-		for (int x = 0; x < 4; ++x) {
+	for (int y = 0; y < 6; ++y) {
+		for (int x = 0; x < 6; ++x) {
 			draw_sprite(tex,
-				-o_x + 64 * (d_x + x) - 32,
-				-o_y + 64 * (d_y + y) - 32, 0);
+				-o_x + 64 * (d_x + x) - 32 - 64,
+				-o_y + 64 * (d_y + y) - 32 - 64, 0);
 		}
 	}
 }
@@ -377,17 +379,17 @@ display()
 	glColor4f(1, 1, 1, 1);
 
 	glBegin(GL_LINES);
-	glVertex2f(-64, -64);
-	glVertex2f(-64,  64);
+	glVertex2f(-CONFIG_SCREEN_WIDTH, -CONFIG_SCREEN_HEIGHT);
+	glVertex2f(-CONFIG_SCREEN_WIDTH,  CONFIG_SCREEN_HEIGHT);
 
-	glVertex2f(-64,  64);
-	glVertex2f( 64,  64);
+	glVertex2f(-CONFIG_SCREEN_WIDTH,  CONFIG_SCREEN_HEIGHT);
+	glVertex2f( CONFIG_SCREEN_WIDTH,  CONFIG_SCREEN_HEIGHT);
 
-	glVertex2f( 64,  64);
-	glVertex2f( 64, -64);
+	glVertex2f( CONFIG_SCREEN_WIDTH,  CONFIG_SCREEN_HEIGHT);
+	glVertex2f( CONFIG_SCREEN_WIDTH, -CONFIG_SCREEN_HEIGHT);
 
-	glVertex2f( 64, -64);
-	glVertex2f(-64, -64);
+	glVertex2f( CONFIG_SCREEN_WIDTH, -CONFIG_SCREEN_HEIGHT);
+	glVertex2f(-CONFIG_SCREEN_WIDTH, -CONFIG_SCREEN_HEIGHT);
 	glEnd();
 #endif
 
