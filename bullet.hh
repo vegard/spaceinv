@@ -3,7 +3,7 @@
 
 class bullet: public object {
 public:
-	bullet();
+	bullet(texture *texture);
 	virtual ~bullet();
 
 public:
@@ -15,14 +15,17 @@ public:
 	void remove_from_space(cpSpace *s);
 
 public:
+	texture *_texture;
+
 	cpBody *_body;
 	cpShape *_shape;
 };
 
-bullet::bullet()
+bullet::bullet(texture *texture):
+	_texture(texture)
 {
 	_body = cpBodyNew(1, 10);
-	_shape = cpCircleShapeNew(_body, 1, cpvzero);
+	_shape = cpCircleShapeNew(_body, texture->_width / 2., cpvzero);
 	_shape->data = this;
 	_shape->collision_type = COLLISION_TYPE_BULLET;
 	_shape->group = COLLISION_GROUP_BULLET;
@@ -49,7 +52,7 @@ bullet::velocity()
 void
 bullet::draw()
 {
-	draw_sprite(bullet_texture, _body->p.x, _body->p.y,
+	draw_sprite(_texture, _body->p.x, _body->p.y,
 		360 * cpvtoangle(_body->rot) / M_PI / 2 + 90);
 }
 

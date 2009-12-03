@@ -67,7 +67,8 @@ static texture* galaga1_texture[6];
 static texture* spaceinv_alien1_texture[2];
 static texture* spaceinv_alien2_texture[2];
 static texture* spaceinv_alien3_texture[2];
-static texture* bullet_texture;
+static texture* galaga_bullet_texture;
+static texture* spaceinv_bullet1_texture;
 static texture* explosion_texture[5];
 
 class object {
@@ -185,7 +186,20 @@ remove_object(object* o)
 	o->remove_from_space(space);
 }
 
+enum bullet_type {
+	BULLET_TYPE_GALAGA,
+	BULLET_TYPE_SPACEINV,
+
+	NR_BULLET_TYPES,
+};
+
+static texture *const *bullet_textures[] = {
+	&galaga_bullet_texture,
+	&spaceinv_bullet1_texture,
+};
+
 static ship *player;
+static bullet_type player_bullet_type = BULLET_TYPE_SPACEINV;
 
 static cpVect camera_p = cpvzero;
 static cpVect camera_v = cpvzero;
@@ -262,7 +276,8 @@ init()
 	spaceinv_alien2_texture[1] = texture::get_png("spaceinv-alien2-2.png");
 	spaceinv_alien3_texture[0] = texture::get_png("spaceinv-alien3-1.png");
 	spaceinv_alien3_texture[1] = texture::get_png("spaceinv-alien3-2.png");
-	bullet_texture = texture::get_png("galaga-bullet.png");
+	galaga_bullet_texture = texture::get_png("galaga-bullet.png");
+	spaceinv_bullet1_texture = texture::get_png("spaceinv-bullet-1.png");
 	explosion_texture[0] = texture::get_png("galaga-explosion-2-1.png");
 	explosion_texture[1] = texture::get_png("galaga-explosion-2-2.png");
 	explosion_texture[2] = texture::get_png("galaga-explosion-2-3.png");
@@ -464,8 +479,15 @@ keyboard(SDL_KeyboardEvent* key)
 		player->_body->w += CONFIG_CONTROL_POLAR_TORQUE;
 		break;
 #endif
+	case SDLK_TAB: {
+		player_bullet_type = (bullet_type)
+			((int) player_bullet_type + 1);
+		if (player_bullet_type == NR_BULLET_TYPES)
+			player_bullet_type = (bullet_type) 0;
+		break;
+	}
 	case SDLK_SPACE: {
-		bullet *b = new bullet();
+		bullet *b = new bullet(*bullet_textures[player_bullet_type]);
 		b->_body->p = cpvadd(player->_body->p,
 			cpvmult(player->_body->rot, 10));
 		b->_body->v = cpvadd(player->_body->v,
