@@ -118,7 +118,7 @@ draw_sprite(texture *tex, double x, double y, double rot)
 	//glTranslatef(trunc(x), trunc(y), 0);
 	glTranslatef(x, y, 0);
 	glRotatef(rot, 0, 0, 1);
-	glScalef(tex->_width / 2, tex->_height / 2, 1);
+	glScalef(tex->_width / 2., tex->_height / 2., 1);
 
 	tex->bind();
 	glColor4f(1, 1, 1, 1);
