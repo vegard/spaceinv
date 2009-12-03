@@ -122,6 +122,9 @@ texture::load_png(texture* texture, const char* filename)
 	texture->_width = info_ptr->width;
 	texture->_height = info_ptr->height;
 
+	printf("Loading %s (%dx%d)...\n",
+		filename, texture->_width, texture->_height);
+
 	png_bytep *row_pointers = png_get_rows(png_ptr, info_ptr);
 	uint8_t *image = new uint8_t[info_ptr->channels
 		* info_ptr->width * info_ptr->height];
@@ -137,13 +140,13 @@ texture::load_png(texture* texture, const char* filename)
 
 	if(png_ptr->color_type == PNG_COLOR_TYPE_RGB) {
 		texture->bind();
-		gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB,
-			info_ptr->width, info_ptr->height,
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+			info_ptr->width, info_ptr->height, 0,
 			GL_RGB, GL_UNSIGNED_BYTE, image);
 	} else if(png_ptr->color_type == PNG_COLOR_TYPE_RGBA) {
 		texture->bind();
-		gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA,
-			info_ptr->width, info_ptr->height,
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+			info_ptr->width, info_ptr->height, 0,
 			GL_RGBA, GL_UNSIGNED_BYTE, image);
 	} else {
 		delete[] image;
