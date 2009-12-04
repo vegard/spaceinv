@@ -497,7 +497,8 @@ keyboard(SDL_KeyboardEvent* key)
 		break;
 	}
 	case SDLK_SPACE: {
-		bullet *b = new bullet(*bullet_textures[player_bullet_type]);
+		bullet *b = new bullet(*bullet_textures[player_bullet_type],
+			2 * CONFIG_FPS);
 		b->_body->p = cpvadd(player->_body->p,
 			cpvmult(player->_body->rot, 10));
 		b->_body->v = cpvadd(player->_body->v,

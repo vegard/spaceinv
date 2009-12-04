@@ -3,7 +3,7 @@
 
 class bullet: public object {
 public:
-	bullet(texture *texture);
+	bullet(texture *texture, unsigned int ttl);
 	virtual ~bullet();
 
 public:
@@ -16,13 +16,15 @@ public:
 
 public:
 	texture *_texture;
+	unsigned int _ttl;
 
 	cpBody *_body;
 	cpShape *_shape;
 };
 
-bullet::bullet(texture *texture):
-	_texture(texture)
+bullet::bullet(texture *texture, unsigned int ttl):
+	_texture(texture),
+	_ttl(ttl)
 {
 	_body = cpBodyNew(1, 10);
 	_shape = cpCircleShapeNew(_body, texture->_width / 2., cpvzero);
@@ -54,6 +56,9 @@ bullet::draw()
 {
 	draw_sprite(_texture, _body->p.x, _body->p.y,
 		360 * cpvtoangle(_body->rot) / M_PI / 2 + 90);
+
+	if (--_ttl == 0)
+		removed_objects.insert(this);
 }
 
 void
