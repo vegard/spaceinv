@@ -432,6 +432,12 @@ display()
 		object *o = *i;
 		add_object(new explosion(o->position(), o->velocity()));
 		remove_object(o);
+		delete o;
+
+		if (o == player) {
+			player = new ship();
+			add_object(player);
+		}
 	}
 
 	exploded_objects.clear();
