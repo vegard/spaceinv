@@ -43,6 +43,7 @@ extern "C" {
 #define CONFIG_CONTROL_POLAR_TORQUE (M_PI / 4.)
 #define CONFIG_CONTROL_POLAR_FORCE 250
 
+#define CONFIG_BULLET_LIFETIME 30
 
 #include "capture.hh"
 #include "texture.hh"
@@ -516,7 +517,7 @@ keyboard(SDL_KeyboardEvent* key)
 	}
 	case SDLK_SPACE: {
 		bullet *b = new bullet(*bullet_textures[player_bullet_type],
-			2 * CONFIG_FPS);
+			CONFIG_BULLET_LIFETIME * CONFIG_FPS);
 		b->_body->p = cpvadd(player->_body->p,
 			cpvmult(player->_body->rot, 10));
 		b->_body->v = cpvadd(player->_body->v,
