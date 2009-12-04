@@ -42,6 +42,8 @@ spaceinv_alien::spaceinv_alien(unsigned int nr_frames, texture **textures):
 
 spaceinv_alien::~spaceinv_alien()
 {
+	cpBodyDestroy(_body);
+	cpShapeDestroy(_shape);
 }
 
 cpVect

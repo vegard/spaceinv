@@ -31,6 +31,8 @@ ship::ship()
 
 ship::~ship()
 {
+	cpBodyDestroy(_body);
+	cpShapeDestroy(_shape);
 }
 
 cpVect

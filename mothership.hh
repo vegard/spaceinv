@@ -37,6 +37,9 @@ mothership::mothership()
 
 mothership::~mothership()
 {
+	cpBodyDestroy(_body);
+	cpShapeDestroy(_shape[0]);
+	cpShapeDestroy(_shape[1]);
 }
 
 cpVect

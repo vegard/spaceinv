@@ -39,6 +39,8 @@ explosion::explosion(cpVect p, cpVect v):
 
 explosion::~explosion()
 {
+	cpBodyDestroy(_body);
+	cpShapeDestroy(_shape);
 }
 
 cpVect

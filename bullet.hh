@@ -37,6 +37,8 @@ bullet::bullet(texture *texture, unsigned int ttl):
 
 bullet::~bullet()
 {
+	cpBodyDestroy(_body);
+	cpShapeDestroy(_shape);
 }
 
 cpVect
