@@ -41,7 +41,7 @@ extern "C" {
 
 #define CONFIG_CONTROL_CARTESIAN_FORCE 30
 #define CONFIG_CONTROL_POLAR_TORQUE (M_PI / 4.)
-#define CONFIG_CONTROL_POLAR_FORCE 45
+#define CONFIG_CONTROL_POLAR_FORCE 250
 
 
 #include "capture.hh"
@@ -200,6 +200,7 @@ static texture *const *bullet_textures[] = {
 
 static ship *player;
 static bullet_type player_bullet_type = BULLET_TYPE_SPACEINV;
+static bool player_thrust;
 
 static cpVect camera_p = cpvzero;
 static cpVect camera_v = cpvzero;
@@ -441,6 +442,14 @@ display()
 	}
 
 	exploded_objects.clear();
+
+	if (player_thrust) {
+		double force = 1. * CONFIG_CONTROL_POLAR_FORCE
+			/ CONFIG_FPS;
+
+		cpBodyApplyImpulse(player->_body,
+			cpvmult(player->_body->rot, force), cpvzero);
+	}
 }
 
 static Uint32
@@ -478,9 +487,7 @@ keyboard(SDL_KeyboardEvent* key)
 	case SDLK_DOWN:
 		break;
 	case SDLK_UP:
-		cpBodyApplyImpulse(player->_body,
-			cpvmult(player->_body->rot,
-				CONFIG_CONTROL_POLAR_FORCE), cpvzero);
+		player_thrust = true;
 		break;
 	case SDLK_LEFT:
 		player->_body->w -= CONFIG_CONTROL_POLAR_TORQUE;
@@ -547,6 +554,7 @@ keyboardUp(SDL_KeyboardEvent* key)
 	case SDLK_DOWN:
 		break;
 	case SDLK_UP:
+		player_thrust = false;
 		break;
 	case SDLK_LEFT:
 		player->_body->w += CONFIG_CONTROL_POLAR_TORQUE;
