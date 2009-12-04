@@ -200,7 +200,11 @@ static texture *const *bullet_textures[] = {
 
 static ship *player;
 static bullet_type player_bullet_type = BULLET_TYPE_SPACEINV;
+#if CONFIG_CONTROL == CONFIG_CONTROL_POLAR
 static bool player_thrust;
+static bool player_turn_left;
+static bool player_turn_right;
+#endif
 
 static cpVect camera_p = cpvzero;
 static cpVect camera_v = cpvzero;
@@ -438,6 +442,11 @@ display()
 		if (o == player) {
 			player = new ship();
 			add_object(player);
+#if CONFIG_CONTROL == CONFIG_CONTROL_POLAR
+			player_thrust = false;
+			player_turn_left = false;
+			player_turn_right = false;
+#endif
 		}
 	}
 
@@ -491,9 +500,11 @@ keyboard(SDL_KeyboardEvent* key)
 		break;
 	case SDLK_LEFT:
 		player->_body->w -= CONFIG_CONTROL_POLAR_TORQUE;
+		player_turn_left = true;
 		break;
 	case SDLK_RIGHT:
 		player->_body->w += CONFIG_CONTROL_POLAR_TORQUE;
+		player_turn_right = true;
 		break;
 #endif
 	case SDLK_TAB: {
@@ -557,10 +568,14 @@ keyboardUp(SDL_KeyboardEvent* key)
 		player_thrust = false;
 		break;
 	case SDLK_LEFT:
-		player->_body->w += CONFIG_CONTROL_POLAR_TORQUE;
+		if (player_turn_left)
+			player->_body->w += CONFIG_CONTROL_POLAR_TORQUE;
+		player_turn_left = false;
 		break;
 	case SDLK_RIGHT:
-		player->_body->w -= CONFIG_CONTROL_POLAR_TORQUE;
+		if (player_turn_right)
+			player->_body->w -= CONFIG_CONTROL_POLAR_TORQUE;
+		player_turn_right = false;
 		break;
 #endif
 	default:
