@@ -6,7 +6,6 @@ extern "C" {
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
-#include <list>
 #include <set>
 #include <vector>
 
@@ -50,6 +49,7 @@ extern "C" {
 
 
 #include "capture.hh"
+#include "console.hh"
 #include "texture.hh"
 
 
@@ -237,30 +237,6 @@ static void camera_update(void)
 	camera_p = cpvadd(camera_p, camera_v);
 }
 
-class message {
-public:
-	message(const char *text, unsigned int ttl = CONFIG_LOG_DEFAULT_TTL);
-	~message();
-
-public:
-	const char *_text;
-	unsigned int _ttl;
-};
-
-message::message(const char *text, unsigned int ttl):
-	_text(text),
-	_ttl(ttl)
-{
-}
-
-message::~message()
-{
-}
-
-typedef std::list<message *> message_list;
-
-static message_list messages;
-
 static int
 ship_bullet_collision(cpShape *shape_a, cpShape *shape_b,
 	cpContact *contacts, int nr_contacts, cpFloat normal_coef, void *data)
@@ -271,7 +247,7 @@ ship_bullet_collision(cpShape *shape_a, cpShape *shape_b,
 	exploded_objects.insert(s);
 	removed_objects.insert(b);
 
-	messages.push_back(new message("Boom!", CONFIG_FPS));
+	console_printf(CONFIG_FPS, "Boom! at (%.2f %.2f)", s->position().x, s->position().y);
 	return 1;
 }
 
@@ -381,7 +357,7 @@ init()
 
 	init_enemies();
 
-	messages.push_back(new message("-- Welcome! --"));
+	console_printf(5 * CONFIG_FPS, "-- Welcome! --");
 
 }
 
@@ -518,23 +494,7 @@ display()
 		2 * CONFIG_SCREEN_HEIGHT * aspect, 0);
 	glScalef(8, 8, 1);
 
-	unsigned int m_y = 1;
-	for (message_list::iterator i = messages.begin(),
-		end = messages.end(); i != end; ++i)
-	{
-		message* m = *i;
-
-		draw_string(1, m_y++, m->_text);
-	}
-
-	if (messages.size()) {
-		message* m = messages.front();
-
-		if (--m->_ttl == 0) {
-			messages.pop_front();
-			delete m;
-		}
-	}
+	console_draw();
 
 	SDL_GL_SwapBuffers();
 
