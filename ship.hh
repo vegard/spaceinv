@@ -51,7 +51,7 @@ void
 ship::draw()
 {
 	cpFloat a = cpvtoangle(_body->rot) + M_PI;
-	unsigned int x = trunc(4 * 6 * a / M_PI / 2);
+	unsigned int x = round(4 * 6 * a / M_PI / 2);
 
 	draw_sprite(galaga1_texture[x % 6], _body->p.x, _body->p.y,
 		90. * (x / 6));
