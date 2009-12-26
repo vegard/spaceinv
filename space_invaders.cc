@@ -279,33 +279,46 @@ bullet_explosion_collision(cpShape *shape_a, cpShape *shape_b,
 {
 	return 0;
 }
+
+static cpVect
+random_enemy_position()
+{
+	while (1) {
+		double x = rand() % 1024 - 512;
+		double y = rand() % 1024 - 512;
+
+		if (cpvlength(cpv(x, y)) > 32)
+			return cpv(x, y);
+	}
+}
+
 static void
 init_enemies()
 {
 	for (unsigned int i = 0; i < 20; ++i) {
 		mothership *m = new mothership();
-		m->_body->p = cpv(rand() % 1024 - 512, rand() % 1024 - 512);
+		m->_body->p = random_enemy_position();
 		add_object(m);
 	}
 
 	for (unsigned int i = 0; i < 10; ++i) {
 		spaceinv_alien *a = new spaceinv_alien(2,
 			spaceinv_alien1_texture);
-		a->_body->p = cpv(rand() % 1024 - 512, rand() % 1024 - 512);
+		a->_body->p = random_enemy_position();
 		add_object(a);
 	}
 
 	for (unsigned int i = 0; i < 10; ++i) {
 		spaceinv_alien *a = new spaceinv_alien(2,
 			spaceinv_alien2_texture);
-		a->_body->p = cpv(rand() % 1024 - 512, rand() % 1024 - 512);
+		a->_body->p = random_enemy_position();
 		add_object(a);
 	}
 
 	for (unsigned int i = 0; i < 10; ++i) {
 		spaceinv_alien *a = new spaceinv_alien(2,
 			spaceinv_alien3_texture);
-		a->_body->p = cpv(rand() % 1024 - 512, rand() % 1024 - 512);
+		a->_body->p = random_enemy_position();
 		add_object(a);
 	}
 }
