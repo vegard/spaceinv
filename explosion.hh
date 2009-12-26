@@ -31,8 +31,8 @@ explosion::explosion(cpVect p, cpVect v):
 	_body->v = v;
 	_shape = cpCircleShapeNew(_body, 16, cpvzero);
 	_shape->data = this;
-	_shape->collision_type = COLLISION_TYPE_BULLET;
-	_shape->group = COLLISION_GROUP_BULLET;
+	_shape->collision_type = COLLISION_TYPE_EXPLOSION;
+	_shape->group = COLLISION_GROUP_EXPLOSION;
 	_shape->e = 0;
 	_shape->u = 0.5;
 }

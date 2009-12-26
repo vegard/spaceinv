@@ -51,13 +51,18 @@ extern "C" {
 
 enum collision_type {
 	COLLISION_TYPE_NONE,
+
 	COLLISION_TYPE_SHIP,
 	COLLISION_TYPE_BULLET,
+	COLLISION_TYPE_EXPLOSION,
 };
 
 enum collision_group {
 	COLLISION_GROUP_NONE,
+
+	/* Shapes in the same group do not generate collisions */
 	COLLISION_GROUP_BULLET,
+	COLLISION_GROUP_EXPLOSION,
 };
 
 static cpSpace *space;
@@ -252,6 +257,17 @@ ship_ship_collision(cpShape *shape_a, cpShape *shape_b,
 	return 1;
 }
 
+static int
+ship_explosion_collision(cpShape *shape_a, cpShape *shape_b,
+	cpContact *contacts, int nr_contacts, cpFloat normal_coef, void *data)
+{
+	object *a = (object *) shape_a->data;
+	object *b = (object *) shape_b->data;
+
+	exploded_objects.insert(a);
+	return 1;
+}
+
 static void
 init_enemies()
 {
@@ -297,9 +313,14 @@ init()
 	cpSpaceAddCollisionPairFunc(space,
 		COLLISION_TYPE_SHIP, COLLISION_TYPE_BULLET,
 		&ship_bullet_collision, NULL);
+
 	cpSpaceAddCollisionPairFunc(space,
 		COLLISION_TYPE_SHIP, COLLISION_TYPE_SHIP,
 		&ship_ship_collision, NULL);
+
+	cpSpaceAddCollisionPairFunc(space,
+		COLLISION_TYPE_SHIP, COLLISION_TYPE_EXPLOSION,
+		&ship_explosion_collision, NULL);
 
 	font_texture = texture::get_png("cp850-8x8.png");
 	starfield_texture[0] = texture::get_png("starfield-1.png");
