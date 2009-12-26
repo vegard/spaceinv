@@ -30,7 +30,6 @@ bullet::bullet(texture *texture, unsigned int ttl):
 	_shape = cpCircleShapeNew(_body, texture->_width / 2., cpvzero);
 	_shape->data = this;
 	_shape->collision_type = COLLISION_TYPE_BULLET;
-	_shape->group = COLLISION_GROUP_BULLET;
 	_shape->e = 0;
 	_shape->u = 0.5;
 }
