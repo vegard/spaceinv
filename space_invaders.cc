@@ -504,6 +504,7 @@ display()
 
 	exploded_objects.clear();
 
+#if CONFIG_CONTROL == CONFIG_CONTROL_POLAR
 	if (player_thrust) {
 		double force = 1. * CONFIG_CONTROL_POLAR_FORCE
 			/ CONFIG_FPS;
@@ -511,6 +512,7 @@ display()
 		cpBodyApplyImpulse(player->_body,
 			cpvmult(player->_body->rot, force), cpvzero);
 	}
+#endif
 }
 
 static Uint32
