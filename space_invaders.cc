@@ -253,6 +253,37 @@ ship_ship_collision(cpShape *shape_a, cpShape *shape_b,
 }
 
 static void
+init_enemies()
+{
+	for (unsigned int i = 0; i < 20; ++i) {
+		mothership *m = new mothership();
+		m->_body->p = cpv(rand() % 1024 - 512, rand() % 1024 - 512);
+		add_object(m);
+	}
+
+	for (unsigned int i = 0; i < 10; ++i) {
+		spaceinv_alien *a = new spaceinv_alien(2,
+			spaceinv_alien1_texture);
+		a->_body->p = cpv(rand() % 1024 - 512, rand() % 1024 - 512);
+		add_object(a);
+	}
+
+	for (unsigned int i = 0; i < 10; ++i) {
+		spaceinv_alien *a = new spaceinv_alien(2,
+			spaceinv_alien2_texture);
+		a->_body->p = cpv(rand() % 1024 - 512, rand() % 1024 - 512);
+		add_object(a);
+	}
+
+	for (unsigned int i = 0; i < 10; ++i) {
+		spaceinv_alien *a = new spaceinv_alien(2,
+			spaceinv_alien3_texture);
+		a->_body->p = cpv(rand() % 1024 - 512, rand() % 1024 - 512);
+		add_object(a);
+	}
+}
+
+static void
 init()
 {
 	cpInitChipmunk();
@@ -294,35 +325,10 @@ init()
 	explosion_texture[3] = texture::get_png("galaga-explosion-2-4.png");
 	explosion_texture[4] = texture::get_png("galaga-explosion-2-5.png");
 
-	for (unsigned int i = 0; i < 20; ++i) {
-		mothership *m = new mothership();
-		m->_body->p = cpv(rand() % 1024 - 512, rand() % 1024 - 512);
-		add_object(m);
-	}
-
-	for (unsigned int i = 0; i < 10; ++i) {
-		spaceinv_alien *a = new spaceinv_alien(2,
-			spaceinv_alien1_texture);
-		a->_body->p = cpv(rand() % 1024 - 512, rand() % 1024 - 512);
-		add_object(a);
-	}
-
-	for (unsigned int i = 0; i < 10; ++i) {
-		spaceinv_alien *a = new spaceinv_alien(2,
-			spaceinv_alien2_texture);
-		a->_body->p = cpv(rand() % 1024 - 512, rand() % 1024 - 512);
-		add_object(a);
-	}
-
-	for (unsigned int i = 0; i < 10; ++i) {
-		spaceinv_alien *a = new spaceinv_alien(2,
-			spaceinv_alien3_texture);
-		a->_body->p = cpv(rand() % 1024 - 512, rand() % 1024 - 512);
-		add_object(a);
-	}
-
 	player = new ship();
 	add_object(player);
+
+	init_enemies();
 }
 
 static void
@@ -573,6 +579,7 @@ keyboard(SDL_KeyboardEvent* key)
 		break;
 	}
 	case SDLK_F1:
+		init_enemies();
 		break;
 	case SDLK_ESCAPE: {
 			SDL_Event event;
