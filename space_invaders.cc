@@ -27,7 +27,7 @@ extern "C" {
 #define CONFIG_CAPTURE_FRAMES 0
 
 /* Size of the window */
-#define CONFIG_WINDOW_WIDTH 1280
+#define CONFIG_WINDOW_WIDTH 1024
 #define CONFIG_WINDOW_HEIGHT 768
 
 /* Size of the game screen */

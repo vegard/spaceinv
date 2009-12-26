@@ -9,8 +9,8 @@ extern "C" {
 static void
 capture()
 {
-	static const unsigned int width = 640;
-	static const unsigned int height = 480;
+	static const unsigned int width = CONFIG_WINDOW_WIDTH;
+	static const unsigned int height = CONFIG_WINDOW_HEIGHT;
 
 	static unsigned int frame = 0;
 
