@@ -62,6 +62,7 @@ enum collision_group {
 
 static cpSpace *space;
 
+static texture* font_texture;
 static texture* starfield_texture[2];
 static texture* mothership_texture;
 static texture* galaga1_texture[6];
@@ -269,6 +270,7 @@ init()
 		COLLISION_TYPE_SHIP, COLLISION_TYPE_SHIP,
 		&ship_ship_collision, NULL);
 
+	font_texture = texture::get_png("cp850-8x8.png");
 	starfield_texture[0] = texture::get_png("starfield-1.png");
 	starfield_texture[1] = texture::get_png("starfield-2.png");
 	mothership_texture = texture::get_png("spaceinv-mothership.png");
@@ -328,24 +330,20 @@ deinit()
 {
 }
 
+static double aspect;
+
 static void
 resize(int width, int height)
 {
 	if(width == 0 || height == 0)
 		return;
 
-	double aspect = 1.0 * height / width;
-
-	glViewport(0, 0, width, height);
+	aspect = 1.0 * height / width;
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	gluOrtho2D(-CONFIG_SCREEN_WIDTH, CONFIG_SCREEN_WIDTH,
-		CONFIG_SCREEN_HEIGHT * aspect, -CONFIG_SCREEN_HEIGHT * aspect);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	glViewport(0, 0, width, height);
 }
 
 static void draw_starfield(texture *tex, double scale)
@@ -367,15 +365,56 @@ static void draw_starfield(texture *tex, double scale)
 }
 
 static void
+draw_char(unsigned int x, unsigned int y, char ch)
+{
+	unsigned int w = font_texture->_width / 8;
+	unsigned int h = font_texture->_height / 8;
+	unsigned int fx = (ch % w);
+	unsigned int fy = ch / w;
+	double fx1 = 1. * fx / w;
+	double fy1 = 1. * fy / h;
+	double fx2 = 1. * (fx + 1) / w;
+	double fy2 = 1. * (fy + 1) / h;
+
+	glPushMatrix();
+	glTranslatef(x, y, 0);
+
+	font_texture->bind();
+	glColor4f(0, 1, 0, 0.8);
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(fx1, fy1);
+	glVertex2f(0, 0);
+
+	glTexCoord2f(fx2, fy1);
+	glVertex2f(1, 0);
+
+	glTexCoord2f(fx2, fy2);
+	glVertex2f(1, 1);
+
+	glTexCoord2f(fx1, fy2);
+	glVertex2f(0, 1);
+	glEnd();
+
+	glPopMatrix();
+}
+
+static void
+draw_string(unsigned int x, unsigned int y, const char *str)
+{
+	for (unsigned int i = 0; str[i]; ++i)
+		draw_char(x + i, y, str[i]);
+}
+
+static void
 display()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	glPushMatrix();
-#if 0
-	glTranslatef(-(camera_p.x - trunc(camera_p.x)),
-		-(camera_p.y - trunc(camera_p.y)), 0);
-#endif
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluOrtho2D(-CONFIG_SCREEN_WIDTH, CONFIG_SCREEN_WIDTH,
+		CONFIG_SCREEN_HEIGHT * aspect, -CONFIG_SCREEN_HEIGHT * aspect);
 
 #if CONFIG_DEBUG_HALFSIZE
 	glPushMatrix();
@@ -413,7 +452,13 @@ display()
 #if CONFIG_DEBUG_HALFSIZE
 	glPopMatrix();
 #endif
-	glPopMatrix();
+
+	glLoadIdentity();
+	gluOrtho2D(0, 2 * CONFIG_SCREEN_WIDTH,
+		2 * CONFIG_SCREEN_HEIGHT * aspect, 0);
+	glScalef(8, 8, 1);
+
+	//draw_string(1, 1, "-- Welcome! --");
 
 	SDL_GL_SwapBuffers();
 
